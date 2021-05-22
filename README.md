@@ -21,8 +21,16 @@ The script will set pin 22 or pin 23 high then low.  You can control the time by
   * ex: 100:f:-1
     * will set a pin high for 100*100k clock cycle, but will not set low
 
+
 ## The code
 The circuit does not have a way to control the speed of the motor due to the binary logic control and the CMOS transistors.  However, I use software to control the speed by controling the timing of the on/off frequencies.  This allows me to turn it fully on to fully off... and anywhere in between.
+
+## Run the code
+
+* ./run action=forward
+* ./run action=backward
+* ./run action=off
+
 
 # Python?
 will try python later, using Java for now, but it's a bit slow due to the jvm.
