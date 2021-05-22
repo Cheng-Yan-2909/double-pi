@@ -4,6 +4,13 @@ On the raspberry pi, connect GPIO pin 22 to one of the input in the schematic an
 
 ![GitHub Logo](double-pi.svg)
 
+## Schematic
+The CMOS transistor [IRFZ44N](https://www.infineon.com/cms/en/product/power/mosfet/12v-300v-n-channel-power-mosfet/irfz44n/) is a power transistor that can drain a lot of current.  The set up will allow me to control the direction of the current flow. 
+
+After this, the 2 sets of 2-[2N7000](https://www.onsemi.com/pdf/datasheet/nds7002a-d.pdf) transistor will provide the on votage for the IRFZ44N.  A "high enough" Ω resistor is required.  I use a 20kΩ.
+
+After this we have 2 sets of 3 2N7000.  This setup is an XOR logic that prevent both input pin to go high which will short the IRFZ44N series.
+
 # Running Debug script:
 The script will set pin 22 or pin 23 high then low.  You can control the time by entering:
 
