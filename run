@@ -1,13 +1,12 @@
 #!/bin/sh
 
-#test="TestIO"
 test="cheng.yan.pi.Runner"
 #if [ ! -z "$1" ]
 #then
 #    test=$1
 #fi
 
-cd bin 
+cd classes 
 java -cp .:classes:/opt/pi4j/lib/'*' $test $*
 cd ..
 
