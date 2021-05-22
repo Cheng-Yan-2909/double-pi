@@ -2,7 +2,7 @@
 This project using raspberry pi 3 or 4 to control the circuit described in the below schematic.
 On the raspberry pi, connect GPIO pin 22 to one of the input in the schematic and connect GPIO 23 to the other input on the schematic.
 
-![GitHub Logo](double-pi.svg)
+![double pi schematic](media/double-pi.svg)
 
 ## Schematic
 The CMOS transistor [IRFZ44N](https://www.infineon.com/cms/en/product/power/mosfet/12v-300v-n-channel-power-mosfet/irfz44n/) is a power transistor that can drain a lot of current.  The set up will allow me to control the direction of the current flow.   The "out" pins will connect to the motor that drives robot.
@@ -34,4 +34,14 @@ The circuit does not have a way to control the speed of the motor due to the bin
 
 # Python?
 will try python later, using Java for now, but it's a bit slow due to the jvm.
+
+# The final product
+
+![back view of the board](media/board-top-view-1.jpg)
+![back view of the board](media/board-front-view.jpg)
+![back view of the board](media/board-back-view.jpg)
+![back view of the board](media/board-top-view-2.jpg)
+![back view of the board](media/board-under-view.jpg)
+![back view of the board](media/board-pi.jpg)
+![back view of the board](media/board-pi-car.jpg)
 
