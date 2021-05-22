@@ -1,0 +1,134 @@
+<html>
+<title>PI Car</title>
+
+<script type="text/javascript">
+
+var EXE_VAL_1 = "run";
+var EXE_VAL_2 = "stop";
+var enabled = true;
+
+function resetAllExe() {
+    elements = document.querySelectorAll("*[name='exe']");
+    
+    for( var i = 0; i < elements.length; i++ ) {
+        elements[i].value = EXE_VAL_1;
+    }
+}
+
+function updateNextExe(obj, nextExe) {
+    var exeNode = obj.parentNode.querySelector("*[name='exe']");
+    
+    if( nextExe ) {
+        exeNode.value = extExe;
+        return;
+    }
+    
+    if( EXE_VAL_1 == exeNode.value ) {
+        exeNode.value = EXE_VAL_2;
+    }
+    else {
+        exeNode.value = EXE_VAL_1;
+    }
+    
+}
+
+function callPi(obj, forced, nextExe) {
+    if( !enabled && !forced ) {
+        return;
+    }
+    
+    enabled = false;
+    var http = new XMLHttpRequest();
+    
+    var url = "/cgi-bin/pi.cgi" + 
+        "?exe=" + obj.parentNode.querySelector("*[name='exe']").value +
+        "&action=" + obj.parentNode.querySelector("*[name='action']").value;
+        
+    debug( "url: " + url );
+    
+    http.open( "GET", url, true );
+    http.onreadystatechange = function() {
+        if( http.readyState != 4 ) return;
+        if( http.status != 200 ) return;
+        
+        piCallBack( http, obj );
+    };
+    http.send();
+    
+    updateNextExe( obj, nextExe );
+}
+
+function piCallBack( http, obj ) {
+    // responseText
+    // responseXML
+    
+    enabled = true;
+    debug( http.responseText );
+}
+
+function debug( msg ) {
+    document.getElementById("debug").innerHTML += msg + "\n";
+}
+
+function toggleDebug(obj) {
+    var stat = obj.getAttribute("status");
+    document.getElementById("debug").style.display = stat;
+    if( stat == "none" ) {
+        obj.setAttribute("status", "block");
+    }
+    else {
+        obj.setAttribute("status", "none");
+    }
+}
+
+</script>
+
+<body>
+
+<div style="border-bottom: solid 1px #999999;font-size:120px;margin-bottom:60px;">
+    <span onclick="toggleDebug(this);" status="block"> Show/Hide Log </span>
+</div>
+
+<div id="controler" style="position:relative;left:220px;font-size:120px;">
+    <div id="row1" style="">
+        <form id="forward" action="" onsubmit="return false;" style="position:relative;left:100px;">
+            <input type="hidden" name="action" value="forward">
+            <input type="hidden" name="exe" value="run">
+            <span type="button" value="Forward" onclick="callPi(this);" style="border:1px solid #999999;margin-bottom:30px;padding:5px 5px 5px 5px;"> Forward </span>
+        </form>
+    </div>
+    <div id="row2" style="">
+        <form id="left" action="" onsubmit="return false;" style="display:inline-block;">
+            <input type="hidden" name="action" value="left">
+            <input type="hidden" name="exe" value="run">
+            <span type="button" value="left" onclick="callPi(this);" style="border:1px solid #999999;margin-right:30px;padding:5px 5px 5px 5px;"> Left </span>
+        </form>
+        <form id="off" action="" onsubmit="return false;" style="display:inline-block;">
+            <input type="hidden" name="action" value="off">
+            <input type="hidden" name="exe" value="run">
+            <span type="button" value="off" onclick="callPi(this, true, 'run');resetAllExe();" style="border:1px solid #999999;margin-right:30px;padding:5px 5px 5px 5px;"> Off </span>
+        </form>
+        <form id="left" action="" onsubmit="return false;" style="display:inline-block;">
+            <input type="hidden" name="action" value="right">
+            <input type="hidden" name="exe" value="run">
+            <span type="button" value="right" onclick="callPi(this);" style="border:1px solid #999999;padding:5px 5px 5px 5px;"> Right </span>
+        </form>
+    </div>
+    <div id="row3" style="">
+        <form id="backward" action="" onsubmit="return false;" style="position:relative;left:100px;">
+            <input type="hidden" name="action" value="backward">
+            <input type="hidden" name="exe" value="run">
+            <span type="button" value="backward" onclick="callPi(this);" style="border:1px solid #999999;margin-top:30px;padding:5px 5px 5px 5px;"> Backward </span>
+        </form>
+    </div>
+    
+</div>
+
+<hr>
+
+<textarea id="debug" cols=200 rows=30 style="display:none;">
+
+</textarea>
+
+</body>
+</html>

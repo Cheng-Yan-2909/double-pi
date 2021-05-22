@@ -1,0 +1,116 @@
+#!/usr/bin/perl
+
+use strict;
+
+my $output_dir = "classes";
+my $src = "src";
+my @dir_list = ();
+my @java_files = ();
+my @class_path = (".", "/opt/pi4j/lib/*");
+
+sub build {
+    while( scalar(@java_files) > 0 ) {
+        my $j = shift(@java_files);
+        #
+        # need to collect a list of dirs inside of $output_dir
+        #
+        my $cp = join(":", @class_path);
+        print "[build] javac -classpath $cp -d $output_dir ${j}...";
+        my $rc = system("javac -classpath $cp -d $output_dir $j 2> /dev/null");
+        
+        if( $rc == 0 ) {
+           print "OK\n";
+        }
+        else {
+           print "Requeued\n";
+           push( @java_files, $j );
+        }
+    }
+}
+
+sub cutDir {
+    my %args = @_;
+    my $dir = $args{'dir'};
+    my $cut = $args{'cut'};
+    $dir =~ s/$cut//;
+    
+    if( $dir ) {
+        return "$dir/";
+    }
+    return "";
+}
+
+sub getDirContent {
+    my %args = @_;
+    my $dir = $args{'dir'};
+    my $cut = $args{'cut'};
+    my $cut_dir = cutDir( @_ );
+    
+    opendir( rddir, $dir );
+    my @sub_dirs = grep{ !/^\./ } readdir(rddir );
+    closedir( rddir );
+    
+    my $dirs = [];
+    my $files = [];
+    
+    foreach( @sub_dirs ) {
+        my $sub_f = "$cut_dir$_";
+        if( -d "$dir/$_" ) {
+            push( @{$dirs}, $sub_f );
+            push(@class_path, "$dir");
+        }
+        else {
+            push( @{$files}, "$dir/$_" );
+        }
+    }
+    
+    return ('dirs' => $dirs, 'files' => $files);
+}
+
+########################
+#
+#  MAIN
+#
+########################
+
+if( -e $output_dir ) {
+    `/bin/rm -rf $output_dir`;
+}
+`/bin/mkdir -p $output_dir`;
+
+my %src_contents = getDirContent( 'dir' => $src, 'cut' => "^$src" );
+push( @dir_list, @{$src_contents{'dirs'}} );
+
+while( scalar(@dir_list) > 0 ) {
+    my $dir = shift @dir_list;
+    if( !$dir ) {
+        next;
+    }
+    
+    print "dir_list[i]: $src/$dir", "\n";
+    
+    my %src_contents = getDirContent( 'dir' => "$src/$dir", 'cut' => "^$src\\/?" );
+    push( @dir_list, @{$src_contents{'dirs'}} );
+    
+    
+    for( @{$src_contents{'files'}} ) {
+        if( m/\.java$/ ) {
+            push( @java_files, $_ );
+        }
+    }
+}
+
+#print "java files: \n", join("\n", @java_files), "\n";
+#print "class path: \n", join("\n", @class_path), "\n";
+
+build();
+
+
+#javac -classpath .:classes:/opt/pi4j/lib/* -d $output_dir src/TestIO.java
+#javac -classpath .:classes:/opt/pi4j/lib/* -d $output_dir src/cheng/yan/pi/Runner.java
+#
+#echo run the class:
+#echo "cd classes; java -cp .:classes:/opt/pi4j/lib/'*' TestIO ; cd .."
+#echo or
+#echo "cd classes; java -cp .:classes:/opt/pi4j/lib/'*' cheng.yan.pi.Runner ; cd .."
+#echo
