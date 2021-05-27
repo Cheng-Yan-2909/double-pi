@@ -7,7 +7,6 @@ test="cheng.yan.debug.TestIO"
 #    test=$1
 #fi
 
-cd classes
-java -cp .:classes:/opt/pi4j/lib/'*' $test $*
+java -cp ./*:./lib/* $test $*
 cd ..
 

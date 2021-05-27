@@ -6,7 +6,7 @@ my $output_dir = "classes";
 my $src = "src";
 my @dir_list = ();
 my @java_files = ();
-my @class_path = (".", "/opt/pi4j/lib/*");
+my @class_path = (".", "./lib/*");
 
 sub build {
     while( scalar(@java_files) > 0 ) {
@@ -67,6 +67,10 @@ sub getDirContent {
     return ('dirs' => $dirs, 'files' => $files);
 }
 
+sub makeJarFile {
+    system( "cd classes ; jar -cf ../double-pi.jar * ; cd .." );
+}
+
 ########################
 #
 #  MAIN
@@ -105,6 +109,7 @@ while( scalar(@dir_list) > 0 ) {
 
 build();
 
+makeJarFile();
 
 #javac -classpath .:classes:/opt/pi4j/lib/* -d $output_dir src/TestIO.java
 #javac -classpath .:classes:/opt/pi4j/lib/* -d $output_dir src/cheng/yan/pi/Runner.java
