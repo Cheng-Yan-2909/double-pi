@@ -27,8 +27,8 @@ public class TestIO {
 	private static GpioPinDigitalOutput backward;
 	
 	
-	private double on_speed = 10;
-	private double off_speed = 10;
+	private double on_speed = 4;
+	private double off_speed = 4;
 	private String dir = "f";
 	
 	public class RunIo extends Thread {
@@ -122,6 +122,9 @@ public class TestIO {
 				 */
 				String[] valList = sb.toString().replaceAll("/s", "").split(":");
 				on_speed = Double.parseDouble(valList[0]);
+                                if( on_speed > 0 ) {
+                                    off_speed = on_speed;
+                                }
 				if( valList.length > 1 ) {
 					dir = valList[1];
 				}
